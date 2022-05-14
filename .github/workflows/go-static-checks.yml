@@ -25,6 +25,7 @@ jobs:
       - name: goimports
         run: |
           go get -d golang.org/x/tools/cmd/goimports
+          go install golang.org/x/tools/cmd/goimports@latest
           test -z $(goimports -l .)
       
       - name: gocyclo
