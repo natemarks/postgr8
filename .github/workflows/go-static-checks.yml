@@ -24,13 +24,12 @@ jobs:
       
       - name: goimports
         run: |
-          go get -d golang.org/x/tools/cmd/goimports
           go install golang.org/x/tools/cmd/goimports@latest
           test -z $(goimports -l .)
       
       - name: gocyclo
         run: |
-          go get -d github.com/fzipp/gocyclo/cmd/gocyclo
+          go install github.com/fzipp/gocyclo/cmd/gocyclo@latest
           test -z $(gocyclo -over 25 .)
       
       - name: unittest
