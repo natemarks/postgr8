@@ -8,9 +8,37 @@ COMMIT := $(shell git rev-parse HEAD)
 
 CURRENT_BRANCH := $(shell git rev-parse --abbrev-ref HEAD)
 DEFAULT_BRANCH := main
+VENV := deployments/.venv
 
 help: ## Show this help.
 	@fgrep -h "##" $(MAKEFILE_LIST) | fgrep -v fgrep | sed -e 's/\\$$//' | sed -e 's/##//'
+
+
+clean-venv: ## re-create virtual env
+	[[ -e $(VENV) ]] && rm -rf $(VENV); \
+	python3 -m venv $(VENV); \
+	( \
+       . $(VENV)/bin/activate; \
+       pip install --upgrade pip; \
+       pip install -r deployments/requirements.txt; \
+    )
+
+pylint: ## run pylint on python files
+	( \
+       . $(VENV)/bin/activate; \
+       find . -type f -name "*.py"  -not -path "./$(VENV)/*" | xargs pylint --max-line-length=90; \
+    )
+
+black: ## use black to format python files
+	( \
+       . deployments/.venv/bin/activate; \
+       find . -type f -name "*.py" -not -path "./deployments/.venv/*" | xargs black; \
+    )
+
+clean-cache: ## clean python adn pytest cache data
+	@find . -type f -name "*.py[co]" -delete -not -path "./deployments/.venv/*"
+	@find . -type d -name __pycache__ -not -path "./deployments/.venv/*" -exec rm -rf {} \;
+	@rm -rf .pytest_cache
 
 
 unittest: ## run test that don't require deployed resources
@@ -26,19 +54,6 @@ static: ## run black and pylint
 			 goimports -w .; \
 			 test -z $(gocyclo -over 25 .); \
     )
-
-bump: clean-venv  ## bump version in main branch
-ifeq ($(CURRENT_BRANCH), $(DEFAULT_BRANCH))
-	( \
-	   source .venv/bin/activate; \
-	   pip install bump2version; \
-	   bump2version $(part); \
-	)
-else
-	@echo "UNABLE TO BUMP - not on Main branch"
-	$(info Current Branch: $(CURRENT_BRANCH), main: $(DEFAULT_BRANCH))
-endif
-
 
 git-status: ## require status is clean so we can use undo_edits to put things back
 	@status=$$(git status --porcelain); \

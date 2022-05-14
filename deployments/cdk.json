@@ -1,5 +1,5 @@
 {
-  "app": "go mod download && go run deployments.go",
+  "app": "python3 app.py",
   "watch": {
     "include": [
       "**"
@@ -7,9 +7,11 @@
     "exclude": [
       "README.md",
       "cdk*.json",
-      "go.mod",
-      "go.sum",
-      "**/*test.go"
+      "requirements*.txt",
+      "source.bat",
+      "**/__init__.py",
+      "python/__pycache__",
+      "tests"
     ]
   },
   "context": {
