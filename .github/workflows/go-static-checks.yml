@@ -1,5 +1,5 @@
 name: gofmt govet goimports gocyclo
-on: [pull_request]
+on: [push, pull_request]
 
 jobs:
   static_checks:
