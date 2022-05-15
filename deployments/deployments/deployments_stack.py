@@ -26,11 +26,15 @@ class DeploymentsStack(Stack):
             vpc_name="postgr8_test_deployment_stack",
         )
 
-        self.db_sg = ec2.SecurityGroup(self, "LaunchTemplateSG",
+        self.db_sg = ec2.SecurityGroup(
+            self,
+            "LaunchTemplateSG",
             vpc=self.db_vpc,
             allow_all_outbound=True,
         )
-        self.db_sg.add_ingress_rule(ec2.Peer.any_ipv4(), ec2.Port.tcp(5432), 'PUBLIC POSTGRES ACCESS')
+        self.db_sg.add_ingress_rule(
+            ec2.Peer.any_ipv4(), ec2.Port.tcp(5432), "PUBLIC POSTGRES ACCESS"
+        )
 
         self.cluster = rds.DatabaseInstance(
             self,
@@ -41,11 +45,10 @@ class DeploymentsStack(Stack):
             credentials=rds.Credentials.from_generated_secret(
                 "clusteradmin"
             ),  # Optional - will default to 'admin' username and generated password
-            
-                instance_type=ec2.InstanceType.of(
-                    ec2.InstanceClass.BURSTABLE3, ec2.InstanceSize.SMALL
-                ),
-                security_groups=[self.db_sg],
-                vpc_subnets=ec2.SubnetSelection(subnet_type=ec2.SubnetType.PUBLIC),
-                vpc=self.db_vpc,
-            )
+            instance_type=ec2.InstanceType.of(
+                ec2.InstanceClass.BURSTABLE3, ec2.InstanceSize.SMALL
+            ),
+            security_groups=[self.db_sg],
+            vpc_subnets=ec2.SubnetSelection(subnet_type=ec2.SubnetType.PUBLIC),
+            vpc=self.db_vpc,
+        )
