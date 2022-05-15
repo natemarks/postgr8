@@ -63,4 +63,19 @@ git-status: ## require status is clean so we can use undo_edits to put things ba
 		exit 1; \
 	fi
 
+db-create: ## Deploy RDS test DB
+	( \
+       . deployments/.venv/bin/activate; \
+       cd deployments; \
+       cdk diff; \
+       cdk deploy; \
+    )
+
+db-destroy: ## Deploy RDS test DB
+	( \
+       . deployments/.venv/bin/activate; \
+       cd deployments; \
+       cdk destroy; \
+    )
+
 .PHONY: build static test artifact	
