@@ -1,4 +1,4 @@
-package sql
+package sql_test
 
 import (
 	"testing"
@@ -6,6 +6,7 @@ import (
 	"github.com/natemarks/postgr8/sql"
 )
 
+// TestTableRowCount TRASH
 func TestTableRowCount(t *testing.T) {
 	type args struct {
 		tableName string
