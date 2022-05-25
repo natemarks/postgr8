@@ -7,6 +7,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/service/secretsmanager"
+	"github.com/aws/aws-sdk-go-v2/service/secretsmanager/types"
 )
 
 // CdkRdsAutoCredential When CDK deploys an RDS instances and automatically
@@ -19,8 +20,36 @@ type CdkRdsAutoCredential struct {
 	Port     int    `json:"port"`
 }
 
-// GetCredentialsFromSecretsmanager Given secretID return CdkRdsAutoCredential
-func GetCredentialsFromSecretsmanager(secretID string) (credentials CdkRdsAutoCredential, err error) {
+
+// ListSecrets Use ListSecretsInput to get a slice of secret entries
+// This really just handles the pagination for me
+func ListSecrets(input *secretsmanager.ListSecretsInput) (secretList []types.SecretListEntry, err error) {
+	//var input secretsmanager.ListSecretsInput
+	cfg, err := config.LoadDefaultConfig(context.TODO())
+	if err != nil {
+		return secretList, err
+	}
+
+	client := *secretsmanager.NewFromConfig(cfg)
+
+	paginator := *secretsmanager.NewListSecretsPaginator(
+		&client,
+		input,
+	)
+	for paginator.HasMorePages() {
+		output, err := paginator.NextPage(context.TODO())
+		if err != nil {
+			return secretList, err
+		}
+		secretList = append(secretList, output.SecretList...)
+	}
+
+	return secretList, err
+}
+
+
+// GetCredentialsFromSecretID Given secretID return CdkRdsAutoCredential
+func GetCredentialsFromSecretID(secretID string) (credentials CdkRdsAutoCredential, err error) {
 	cfg, err := config.LoadDefaultConfig(context.TODO())
 	if err != nil {
 		return credentials, err
