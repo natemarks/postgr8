@@ -24,7 +24,7 @@ func GetTestCredentials()(creds credentials.CdkRdsAutoCredential, err error){
 			},
 		},
 	}
-	// Get a lsit of secrets that match the filter
+	// Get a list of secrets that match the filter
 	listOutput, err := credentials.ListSecrets(testSecretInput)
 	if err != nil {
 		return creds, err
@@ -38,7 +38,7 @@ func GetTestCredentials()(creds credentials.CdkRdsAutoCredential, err error){
 		return creds, errors.New(
 			"too many matching secrets. Clean up extras")
 	}
-	// Get the secrect name from the matching secret and use it to get the 
+	// Get the secret name from the matching secret and use it to get the 
 	// credentials
 	secretID := *listOutput[0].Name
 	creds, err = credentials.GetCredentialsFromSecretID(secretID)
