@@ -7,9 +7,9 @@ from deployments.deployments_stack import DeploymentsStack
 
 
 app = cdk.App()
-DeploymentsStack(
+deployment_stack = DeploymentsStack(
     app,
     "Postgr8TestDeploymentStack",
 )
-
+cdk.Tags.of(deployment_stack).add("purpose", "postgr8_test_fixture")
 app.synth()

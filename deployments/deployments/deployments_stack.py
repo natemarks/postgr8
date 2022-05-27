@@ -7,8 +7,10 @@ from aws_cdk import (
     Stack,
     aws_ec2 as ec2,
     aws_rds as rds,
+    aws_secretsmanager as secretsmanager
 )
 from constructs import Construct
+import json
 
 
 class DeploymentsStack(Stack):
@@ -26,15 +28,27 @@ class DeploymentsStack(Stack):
             vpc_name="postgr8_test_deployment_stack",
         )
 
+        # create the DB SG
         self.db_sg = ec2.SecurityGroup(
             self,
-            "LaunchTemplateSG",
+            "postgr8_test_sg",
             vpc=self.db_vpc,
             allow_all_outbound=True,
         )
+        # permit inbound access from anywhere
         self.db_sg.add_ingress_rule(
             ec2.Peer.any_ipv4(), ec2.Port.tcp(5432), "PUBLIC POSTGRES ACCESS"
         )
+
+        # create the master secret
+        self.secret = secretsmanager.Secret(self,"postgr8_test_secret",
+            generate_secret_string=secretsmanager.SecretStringGenerator(
+                secret_string_template=json.dumps({"username": "postgres"}),
+                generate_string_key="password"
+            )
+)
+
+
 
         self.cluster = rds.DatabaseInstance(
             self,
@@ -42,9 +56,7 @@ class DeploymentsStack(Stack):
             engine=rds.DatabaseInstanceEngine.postgres(
                 version=rds.PostgresEngineVersion.VER_13_6
             ),
-            credentials=rds.Credentials.from_generated_secret(
-                "clusteradmin"
-            ),  # Optional - will default to 'admin' username and generated password
+            credentials=rds.Credentials.from_secret(self.secret),
             instance_type=ec2.InstanceType.of(
                 ec2.InstanceClass.BURSTABLE3, ec2.InstanceSize.SMALL
             ),

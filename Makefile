@@ -55,6 +55,12 @@ static: ## run black and pylint
 			 test -z $(gocyclo -over 25 .); \
     )
 
+lint:  ##  run golint
+	( \
+			 go install golang.org/x/lint/golint@latest; \
+			 golint ./...; \
+    )
+
 git-status: ## require status is clean so we can use undo_edits to put things back
 	@status=$$(git status --porcelain); \
 	if [ ! -z "$${status}" ]; \
@@ -62,6 +68,14 @@ git-status: ## require status is clean so we can use undo_edits to put things ba
 		echo "Error - working directory is dirty. Commit those changes!"; \
 		exit 1; \
 	fi
+
+db-synth: ## Deploy RDS test DB
+	( \
+       . deployments/.venv/bin/activate; \
+       cd deployments; \
+       cdk diff; \
+       cdk synth; \
+    )
 
 db-create: ## Deploy RDS test DB
 	( \
@@ -77,5 +91,9 @@ db-destroy: ## Deploy RDS test DB
        cd deployments; \
        cdk destroy; \
     )
+
+godoc: ## run godoc server : http://localhost:6060/pkg/github.com/natemarks/postgr8/
+	echo "http://localhost:6060/pkg/github.com/natemarks/postgr8/"
+	godoc -http=:6060
 
 .PHONY: build static test artifact	
