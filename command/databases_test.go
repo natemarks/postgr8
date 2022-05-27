@@ -22,7 +22,7 @@ func TestDatabaseFunctions(t *testing.T) {
 		t.Fatal("failed to get connection to test instance")
 	}
 
-	// close database
+	// close database at the end of the test function
 	defer func(conn *sql.DB) {
 		_ = conn.Close()
 	}(conn)
