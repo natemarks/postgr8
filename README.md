@@ -1,11 +1,23 @@
 # postgr8
-Go functons for doing simple admin stuff with postgres. The focus is on the  care and feeding of AWS RDS Postgres. Don't expect anything fancy or original. This is really meant to help a non-DBA get by.
-
-It's just good enough.
+Go functions for doing simple admin stuff with postgres. 
 
 
-## Structure
+## Usage
+run make godoc to start the local go doc server
+```
+make godoc
+```
+The connect with your browser
+http://localhost:6060/pkg/github.com/natemarks/postgr8/
 
-### deploy/
-Automation for creating and destroying public RDS for testing. Bring your own account and open your wallet. Nothing's free.
 
+## Testing
+
+The deployments/ folder contains AWS CDK code to create an open test database. It also puts the credentials in secretsmanager. before running tests, set your aws credentials and install the aws python CDK. Then run:
+```make db-create
+```
+
+Now that the  database exists you can run all of the tests:
+```
+make deploymenttest
+```

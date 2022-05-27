@@ -92,4 +92,8 @@ db-destroy: ## Deploy RDS test DB
        cdk destroy; \
     )
 
+godoc: ## run godoc server : http://localhost:6060/pkg/github.com/natemarks/postgr8/
+	echo "http://localhost:6060/pkg/github.com/natemarks/postgr8/"
+	godoc -http=:6060
+
 .PHONY: build static test artifact	
