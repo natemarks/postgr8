@@ -5,21 +5,21 @@ import (
 
 	"github.com/aws/aws-sdk-go-v2/service/secretsmanager"
 	"github.com/aws/aws-sdk-go-v2/service/secretsmanager/types"
+	"github.com/natemarks/postgr8/command"
 	"github.com/natemarks/postgr8/credentials"
 )
 
-
-func GetTestCredentials()(creds credentials.CdkRdsAutoCredential, err error){
+func GetTestConnParams() (connParams command.InstanceConnectionParams, err error) {
 
 	// set secret list filter using the tags set in deployments/app.py
 	testSecretInput := &secretsmanager.ListSecretsInput{
 		Filters: []types.Filter{
 			{
-				Key:   "tag-key",
+				Key:    "tag-key",
 				Values: []string{"purpose"},
 			},
 			{
-				Key:   "tag-value",
+				Key:    "tag-value",
 				Values: []string{"postgr8_test_fixture"},
 			},
 		},
@@ -27,20 +27,20 @@ func GetTestCredentials()(creds credentials.CdkRdsAutoCredential, err error){
 	// Get a list of secrets that match the filter
 	listOutput, err := credentials.ListSecrets(testSecretInput)
 	if err != nil {
-		return creds, err
+		return connParams, err
 	}
 	// Make sure there is exactly one match
 	if len(listOutput) == 0 {
-		return creds, errors.New(
+		return connParams, errors.New(
 			"no matching secrets. Check AWS credentials or deploy test fixture CDK")
 	}
 	if len(listOutput) > 1 {
-		return creds, errors.New(
+		return connParams, errors.New(
 			"too many matching secrets. Clean up extras")
 	}
-	// Get the secret name from the matching secret and use it to get the 
+	// Get the secret name from the matching secret and use it to get the
 	// credentials
 	secretID := *listOutput[0].Name
-	creds, err = credentials.GetCredentialsFromSecretID(secretID)
-	return creds, err
+	connParams, err = credentials.GetCredentialsFromSecretID(secretID)
+	return connParams, err
 }

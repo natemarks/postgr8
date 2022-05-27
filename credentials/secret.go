@@ -8,18 +8,8 @@ import (
 	"github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/service/secretsmanager"
 	"github.com/aws/aws-sdk-go-v2/service/secretsmanager/types"
+	"github.com/natemarks/postgr8/command"
 )
-
-// CdkRdsAutoCredential When CDK deploys an RDS instances and automatically
-// generates  credentials in secretsmanager, this is the format of the JSON
-type CdkRdsAutoCredential struct {
-	Username string `json:"username"`
-	Password string `json:"password"`
-	Engine   string `json:"engine"`
-	Host     string `json:"host"`
-	Port     int    `json:"port"`
-}
-
 
 // ListSecrets Use ListSecretsInput to get a slice of secret entries
 // This really just handles the pagination for me
@@ -48,8 +38,8 @@ func ListSecrets(input *secretsmanager.ListSecretsInput) (secretList []types.Sec
 }
 
 
-// GetCredentialsFromSecretID Given secretID return CdkRdsAutoCredential
-func GetCredentialsFromSecretID(secretID string) (credentials CdkRdsAutoCredential, err error) {
+// GetCredentialsFromSecretID Given secretID return command.InstanceConnectionParams
+func GetCredentialsFromSecretID(secretID string) (credentials command.InstanceConnectionParams, err error) {
 	cfg, err := config.LoadDefaultConfig(context.TODO())
 	if err != nil {
 		return credentials, err

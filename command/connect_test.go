@@ -1,19 +1,21 @@
-package pg
+package command_test
+
 
 import (
 	"testing"
 
-	"github.com/natemarks/postgr8/credentials"
+	_ "github.com/lib/pq"
+	"github.com/natemarks/postgr8/command"
 	"github.com/natemarks/postgr8/internal"
 )
 
 func TestValidCredentials(t *testing.T) {
-	fixtureCreds, err := internal.GetTestCredentials()
+	connParams, err := internal.GetTestConnParams()
 	if err != nil {
 		t.Error(err)
 	}
 	type args struct {
-		creds credentials.CdkRdsAutoCredential
+		connData command.InstanceConnectionParams
 	}
 	tests := []struct {
 		name       string
@@ -22,13 +24,13 @@ func TestValidCredentials(t *testing.T) {
 		wantErr    bool
 	}{
 		{name: "valid",
-			args:       args{fixtureCreds},
+			args:       args{connParams},
 			wantResult: true,
 			wantErr:    false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			gotResult, err := ValidCredentials(tt.args.creds)
+			gotResult, err := command.ValidCredentials(tt.args.connData)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("ValidCredentials() error = %v, wantErr %v", err, tt.wantErr)
 				return
