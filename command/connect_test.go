@@ -1,6 +1,5 @@
 package command_test
 
-
 import (
 	"testing"
 

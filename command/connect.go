@@ -3,8 +3,6 @@ package command
 import (
 	"database/sql"
 	"fmt"
-
-	_ "github.com/lib/pq"
 )
 
 // InstanceConnectionParams for new postgres instance connection

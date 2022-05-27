@@ -3,8 +3,6 @@ package command
 import (
 	"database/sql"
 	"fmt"
-
-	_ "github.com/lib/pq"
 )
 
 // ListDatabases Return list of all database names in the instance
@@ -22,16 +20,14 @@ func ListDatabases(conn *sql.DB) (dbNames []string, err error) {
 	return dbNames, err
 }
 
-// CreateDatabase
+// CreateDatabase create database using an existing instance connection
 func CreateDatabase(conn *sql.DB, dbName string) (err error) {
-	result, err := conn.Exec("create database " + dbName)
-	fmt.Println(result.LastInsertId())
+	_, err = conn.Exec(fmt.Sprintf("create database %s", dbName))
 	return err
 }
 
-// DestroyDatabase
+// DestroyDatabase destroy database using an existing instance connection
 func DestroyDatabase(conn *sql.DB, dbName string) (err error) {
-	result, err := conn.Exec("drop database " + dbName)
-	fmt.Println(result.LastInsertId())
+	_, err = conn.Exec(fmt.Sprintf("drop database %s", dbName))
 	return err
 }

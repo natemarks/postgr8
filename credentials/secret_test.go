@@ -12,11 +12,11 @@ func TestSecrets(t *testing.T) {
 	testSecretInput := &secretsmanager.ListSecretsInput{
 		Filters: []types.Filter{
 			{
-				Key:   "tag-key",
+				Key:    "tag-key",
 				Values: []string{"purpose"},
 			},
 			{
-				Key:   "tag-value",
+				Key:    "tag-value",
 				Values: []string{"postgr8_test_fixture"},
 			},
 		},
@@ -25,14 +25,14 @@ func TestSecrets(t *testing.T) {
 		input *secretsmanager.ListSecretsInput
 	}
 	tests := []struct {
-		name           string
-		args           args
-		wantErr        bool
+		name    string
+		args    args
+		wantErr bool
 	}{
 		{name: "valid",
-	args: args{
-		input: testSecretInput,
-	},wantErr: false,},
+			args: args{
+				input: testSecretInput,
+			}, wantErr: false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

@@ -37,7 +37,6 @@ func ListSecrets(input *secretsmanager.ListSecretsInput) (secretList []types.Sec
 	return secretList, err
 }
 
-
 // GetCredentialsFromSecretID Given secretID return command.InstanceConnectionParams
 func GetCredentialsFromSecretID(secretID string) (credentials command.InstanceConnectionParams, err error) {
 	cfg, err := config.LoadDefaultConfig(context.TODO())
