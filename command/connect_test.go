@@ -1,3 +1,5 @@
+// +build !unit
+
 package command_test
 
 import (
