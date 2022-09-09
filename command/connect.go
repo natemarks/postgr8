@@ -9,11 +9,12 @@ import (
 // When the CDK deploys an RDS instances and automatically generates
 // credentials in secretsmanager, this is the format of the JSON
 type InstanceConnectionParams struct {
-	Username string `json:"username"`
-	Password string `json:"password"`
-	Engine   string `json:"engine"`
-	Host     string `json:"host"`
-	Port     int    `json:"port"`
+	Username             string `json:"username"`
+	Password             string `json:"password"`
+	Engine               string `json:"engine"`
+	Host                 string `json:"host"`
+	Port                 int    `json:"port"`
+	DbInstanceIdentifier string `json:"dbInstanceIdentifier"`
 }
 
 // ConnectionString Return a connection string
