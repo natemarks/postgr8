@@ -1,4 +1,4 @@
-name: gofmt govet goimports gocyclo
+name: make-static make-lint make-unittest
 on: [push, pull_request]
 
 jobs:
@@ -12,26 +12,16 @@ jobs:
       - name: Set up Go2
         uses: actions/setup-go@v2
         with:
-          go-version: 1.17
-      
-      - name: gofmt
+          go-version: 1.18
+
+      - name: make-static
         run: |
-          test -z $(gofmt -l .)
-      
-      - name: govet
+          make static
+
+      - name: make-golint
         run: |
-          test -z $(go vet ./...)
-      
-      - name: goimports
-        run: |
-          go install golang.org/x/tools/cmd/goimports@latest
-          test -z $(goimports -l .)
-      
-      - name: gocyclo
-        run: |
-          go install github.com/fzipp/gocyclo/cmd/gocyclo@latest
-          test -z $(gocyclo -over 25 .)
-      
-      - name: unittest
+          make lint
+
+      - name: make-unittest
         run: |
           make unittest
