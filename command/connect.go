@@ -3,6 +3,8 @@ package command
 import (
 	"database/sql"
 	"fmt"
+	"net"
+	"time"
 )
 
 // InstanceConnectionParams for new postgres instance connection
@@ -67,4 +69,21 @@ func NewInstanceConn(connParams InstanceConnectionParams) (conn *sql.DB, err err
 		return conn, err
 	}
 	return conn, err
+}
+
+// TCPOk Open a TCP connection to the database. return true if successful
+func TCPOk(connParams InstanceConnectionParams, timeout int) bool {
+	// Create dialer with timeout in seconds
+	d := net.Dialer{Timeout: time.Second * time.Duration(timeout)}
+	// connect
+	conn, err := d.Dial("tcp", fmt.Sprintf("%s:%d", connParams.Host, connParams.Port))
+
+	// If the connection returns an error, return BEFORE we try to close the
+	// connection. Otherwise, the close throws an exception because the connection
+	// doesn't exist.
+	if err != nil {
+		return false
+	}
+	defer conn.Close()
+	return true
 }
